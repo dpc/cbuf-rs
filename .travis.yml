@@ -4,7 +4,7 @@ rust:
 env:
   - DOCS_DEFAULT_MODULE=cbuf
 script:
-  - make test doc
+  - make test doc bench
 after_success: |
   cargo doc \
   && echo '<meta http-equiv="refresh" content="0;url='${DOCS_DEFAULT_MODULE}'/index.html">' > target/doc/index.html && \
