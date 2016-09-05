@@ -47,14 +47,14 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-31' class='srclink' href='../src/cbuf/src/lib.rs.html#36-40' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-31' class='srclink' href='../src/cbuf/src/lib.rs.html#37-41' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct CBufControl&lt;T&gt; {
     // some fields omitted
 }</pre><div class='docblock'><p>Circular Buffer Control</p>
 
 <p>Implements the actual logic of Circular Buffer, but requires passing &amp;[T]
 to <code>get</code> and <code>put</code>.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='struct' href='../cbuf/struct.CBufControl.html' title='cbuf::CBufControl'>CBufControl</a>&lt;T&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-60' class='srclink' href='../src/cbuf/src/lib.rs.html#122-195' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='struct' href='../cbuf/struct.CBufControl.html' title='cbuf::CBufControl'>CBufControl</a>&lt;T&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-60' class='srclink' href='../src/cbuf/src/lib.rs.html#123-196' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../cbuf/struct.CBufControl.html' title='cbuf::CBufControl'>CBufControl</a>&lt;T&gt;</code></span></h4>
 <h4 id='method.is_empty' class='method'><span id='is_empty.v' class='invisible'><code>fn <a href='#method.is_empty' class='fnname'>is_empty</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></h4>
 <div class='docblock'><p>See corresponding method of CBuf</p>
@@ -72,7 +72,7 @@ to <code>get</code> and <code>put</code>.</p>
 <div class='docblock'><p>See corresponding method of CBuf</p>
 </div><h4 id='method.put_unchecked' class='method'><span id='put_unchecked.v' class='invisible'><code>fn <a href='#method.put_unchecked' class='fnname'>put_unchecked</a>(&amp;mut self, buf: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a>T<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, val: T)</code></span></h4>
 <div class='docblock'><p>See corresponding method of CBuf</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../cbuf/struct.CBufControl.html' title='cbuf::CBufControl'>CBufControl</a>&lt;T&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-22' class='srclink' href='../src/cbuf/src/lib.rs.html#35' title='goto source code'>[src]</a></span></h3>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../cbuf/struct.CBufControl.html' title='cbuf::CBufControl'>CBufControl</a>&lt;T&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-22' class='srclink' href='../src/cbuf/src/lib.rs.html#36' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>
 </div></div></section>
