@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `CBuf` struct in crate `cbuf`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, CBuf">
+
+    <title>cbuf::CBuf - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>cbuf</a></p><script>window.sidebarCurrent = {name: 'CBuf', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>cbuf</a>::<wbr><a class='struct' href=''>CBuf</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-17' class='srclink' href='../src/cbuf/src/lib.rs.html#26-29' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct CBuf&lt;'a,&nbsp;T:&nbsp;'a&gt; {
+    // some fields omitted
+}</pre><div class='docblock'><p>Circular Buffer</p>
+
+<p>Turns a slice into a Circular buffer with head and tail indexes.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>&gt; <a class='struct' href='../cbuf/struct.CBuf.html' title='cbuf::CBuf'>CBuf</a>&lt;'a,&nbsp;T&gt; <span class='where'>where T: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-36' class='srclink' href='../src/cbuf/src/lib.rs.html#43-120' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class='method'><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(buf: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;'a mut [</a>T<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>) -&gt; <a class='struct' href='../cbuf/struct.CBuf.html' title='cbuf::CBuf'>CBuf</a>&lt;T&gt;</code></span></h4>
+<div class='docblock'><p>Create new CBuf</p>
+
+<p>Length (not capacity) will be used to store elements
+in the circular buffer.</p>
+</div><h4 id='method.is_full' class='method'><span id='is_full.v' class='invisible'><code>fn <a href='#method.is_full' class='fnname'>is_full</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></h4>
+<div class='docblock'><p>Is buffer full?</p>
+</div><h4 id='method.is_empty' class='method'><span id='is_empty.v' class='invisible'><code>fn <a href='#method.is_empty' class='fnname'>is_empty</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></span></h4>
+<div class='docblock'><p>Is buffer empty?</p>
+</div><h4 id='method.peek' class='method'><span id='peek.v' class='invisible'><code>fn <a href='#method.peek' class='fnname'>peek</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;T&gt;</code></span></h4>
+<div class='docblock'><p>Peek next element from the CBuf without removing it</p>
+
+<p>Returns <code>None</code> if buffer is empty.</p>
+</div><h4 id='method.peek_unchecked' class='method'><span id='peek_unchecked.v' class='invisible'><code>fn <a href='#method.peek_unchecked' class='fnname'>peek_unchecked</a>(&amp;mut self) -&gt; T</code></span></h4>
+<div class='docblock'><p>Peek next element from the CBuf without removing it</p>
+
+<p>Makes the buffer misbehave if it&#39;s empty.</p>
+</div><h4 id='method.get' class='method'><span id='get.v' class='invisible'><code>fn <a href='#method.get' class='fnname'>get</a>(&amp;mut self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;T&gt;</code></span></h4>
+<div class='docblock'><p>Remove one element from the CBuf</p>
+
+<p>Returns <code>None</code> if buffer is empty.</p>
+</div><h4 id='method.get_unchecked' class='method'><span id='get_unchecked.v' class='invisible'><code>fn <a href='#method.get_unchecked' class='fnname'>get_unchecked</a>(&amp;mut self) -&gt; T</code></span></h4>
+<div class='docblock'><p>Remove one element from the CBuf</p>
+
+<p>Makes the buffer misbehave if it&#39;s empty.</p>
+</div><h4 id='method.put' class='method'><span id='put.v' class='invisible'><code>fn <a href='#method.put' class='fnname'>put</a>(&amp;mut self, val: T)</code></span></h4>
+<div class='docblock'><p>Add element the buffer</p>
+
+<p>Ignores the write if buffer is full.</p>
+</div><h4 id='method.put_unchecked' class='method'><span id='put_unchecked.v' class='invisible'><code>fn <a href='#method.put_unchecked' class='fnname'>put_unchecked</a>(&amp;mut self, val: T)</code></span></h4>
+<div class='docblock'><p>Add element the buffer</p>
+
+<p>Makes the buffer misbehave if it&#39;s full.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a,&nbsp;T:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> + 'a&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../cbuf/struct.CBuf.html' title='cbuf::CBuf'>CBuf</a>&lt;'a,&nbsp;T&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-8' class='srclink' href='../src/cbuf/src/lib.rs.html#25' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "cbuf";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
