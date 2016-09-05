@@ -1,13 +1,13 @@
-// Copyright 2015 Dawid Ciężarkiewicz
-// See LICENSE-MPL
-//
-// Non-thread-shareable, simple and efficient Circular Buffer
-// implementation that can store N elements when full (typical circular
-// buffer implementations store N-1) without using separate flags.
-//
-// Uses only `core` so can be used in `#[no_std]` projects by using
-// `no_std` feature.
-//
+//! Modified 2016 Garrett Berg <vitiral@gmail.com>
+//! Copyright 2015 Dawid Ciężarkiewicz
+//! See LICENSE-MPL
+//!
+//! Non-thread-shareable, simple and efficient Circular Buffer
+//! implementation that can store N elements when full (typical circular
+//! buffer implementations store N-1) without using separate flags.
+//!
+//! Uses only `core` so can be used in `#[no_std]` projects by using
+//! `no_std` feature.
 #![no_std]
 #![feature(const_fn)]
 #![feature(test)]
@@ -59,17 +59,13 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Is buffer full?
     #[inline]
     pub fn is_full(&self) -> bool {
-        let CBuf { ref ctrl, .. } = *self;
-
-        ctrl.is_full()
+        self.ctrl.is_full()
     }
 
     /// Is buffer empty?
     #[inline]
     pub fn is_empty(&self) -> bool {
-        let CBuf { ref ctrl, .. } = *self;
-
-        ctrl.is_empty()
+        self.ctrl.is_empty()
     }
 
 
@@ -78,10 +74,7 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Returns `None` if buffer is empty.
     #[inline]
     pub fn peek(&mut self) -> Option<T> {
-        let CBuf { ref mut ctrl, ref buf } = *self;
-
-
-        ctrl.get(buf)
+        self.ctrl.peek(self.buf)
     }
 
     /// Peek next element from the CBuf without removing it
@@ -89,10 +82,7 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Makes the buffer misbehave if it's empty.
     #[inline]
     pub fn peek_unchecked(&mut self) -> T {
-        let CBuf { ref mut ctrl, ref buf } = *self;
-
-
-        ctrl.peek_unchecked(buf)
+        self.ctrl.peek_unchecked(self.buf)
     }
 
 
@@ -101,10 +91,7 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Returns `None` if buffer is empty.
     #[inline]
     pub fn get(&mut self) -> Option<T> {
-        let CBuf { ref mut ctrl, ref buf } = *self;
-
-
-        ctrl.get(buf)
+        self.ctrl.get(self.buf)
     }
 
     /// Remove one element from the CBuf
@@ -112,10 +99,7 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Makes the buffer misbehave if it's empty.
     #[inline]
     pub fn get_unchecked(&mut self) -> T {
-        let CBuf { ref mut ctrl, ref buf } = *self;
-
-
-        ctrl.get_unchecked(buf)
+        self.ctrl.get_unchecked(self.buf)
     }
 
     /// Add element the buffer
@@ -123,9 +107,7 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Ignores the write if buffer is full.
     #[inline]
     pub fn put(&mut self, val: T) {
-        let CBuf { ref mut ctrl, ref mut buf } = *self;
-
-        ctrl.put(buf, val)
+        self.ctrl.put(self.buf, val)
     }
 
     /// Add element the buffer
@@ -133,9 +115,7 @@ impl<'a, T: Clone> CBuf<'a, T>
     /// Makes the buffer misbehave if it's full.
     #[inline]
     pub fn put_unchecked(&mut self, val: T) {
-        let CBuf { ref mut ctrl, ref mut buf } = *self;
-
-        ctrl.put_unchecked(buf, val)
+        self.ctrl.put_unchecked(self.buf, val)
     }
 }
 
@@ -222,19 +202,24 @@ mod tests {
 
     #[test]
     fn basic_ctl() {
-        let mut buf = [0u8, 2];
+        let mut buf = &mut [0u8, 2];
         let mut cbuf = CBufControl::<u8>::new();
 
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
 
-        cbuf.put(&mut buf, 0);
-        cbuf.put(&mut buf, 0);
+        cbuf.put(buf, 3);
+        cbuf.put(buf, 4);
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
 
-        cbuf.get(&buf);
-        cbuf.get(&buf);
+        assert_eq!(cbuf.peek(buf).unwrap(), 3);
+        cbuf.peek(buf).unwrap();
+        assert!(!cbuf.is_empty());
+        assert!(cbuf.is_full());
+
+        assert_eq!(cbuf.get(buf).unwrap(), 3);
+        assert_eq!(cbuf.get(buf).unwrap(), 4);
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
     }
@@ -247,13 +232,18 @@ mod tests {
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
 
-        cbuf.put(0);
-        cbuf.put(0);
+        cbuf.put(3);
+        cbuf.put(4);
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
 
-        cbuf.get();
-        cbuf.get();
+        assert_eq!(cbuf.peek().unwrap(), 3);
+        cbuf.peek().unwrap();
+        assert!(!cbuf.is_empty());
+        assert!(cbuf.is_full());
+
+        assert_eq!(cbuf.get().unwrap(), 3);
+        assert_eq!(cbuf.get().unwrap(), 4);
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
     }
