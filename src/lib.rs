@@ -1,7 +1,8 @@
-//! Modified 2016 Garrett Berg <vitiral@gmail.com>
-//! Copyright 2015 Dawid Ciężarkiewicz
-//! See LICENSE-MPL
-//!
+// Modified 2016 Garrett Berg <vitiral@gmail.com>
+// Copyright 2015 Dawid Ciężarkiewicz
+// See LICENSE-MPL
+//
+
 //! Non-thread-shareable, simple and efficient Circular Buffer
 //! implementation that can store N elements when full (typical circular
 //! buffer implementations store N-1) without using separate flags.
