@@ -210,6 +210,8 @@ mod tests {
 
         cbuf.put(buf, 3);
         cbuf.put(buf, 4);
+        cbuf.put(buf, 42); // will have no effect
+        cbuf.put(buf, 42); // will have no effect
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
 
@@ -222,6 +224,11 @@ mod tests {
         assert_eq!(cbuf.get(buf).unwrap(), 4);
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
+
+        assert!(cbuf.get(buf).is_none());
+        assert!(cbuf.get(buf).is_none());
+        cbuf.put(buf, 42);
+        assert_eq!(cbuf.get(buf).unwrap(), 42);
     }
 
     #[test]
@@ -234,6 +241,8 @@ mod tests {
 
         cbuf.put(3);
         cbuf.put(4);
+        cbuf.put(42); // will have no effect
+        cbuf.put(42); // will have no effect
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
 
@@ -246,6 +255,11 @@ mod tests {
         assert_eq!(cbuf.get().unwrap(), 4);
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
+
+        assert!(cbuf.get().is_none());
+        assert!(cbuf.get().is_none());
+        cbuf.put(42);
+        assert_eq!(cbuf.get().unwrap(), 42);
     }
 
     #[test]
