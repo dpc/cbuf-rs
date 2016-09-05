@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://travis-ci.org/dpc/cbuf-rs">
-      <img src="https://img.shields.io/travis/dpc/cbuf/master.svg?style=flat-square" alt="Travis CI Build Status">
+      <img src="https://img.shields.io/travis/dpc/cbuf-rs/master.svg?style=flat-square" alt="Travis CI Build Status">
   </a>
   <a href="https://crates.io/crates/cbuf">
       <img src="http://meritbadge.herokuapp.com/cbuf?style=flat-square" alt="crates.io">
