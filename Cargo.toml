@@ -1,8 +1,8 @@
 [package]
-name = "dpc-cbuf"
+name = "cbuf"
 description = "Non-thread-shareable, simple and efficient Circular Buffer implementation that can store N elements when full (typical circular buffer implementations store N-1) without using separate flags."
 keywords = ["circular", "buffer", "no_std", "core", "data"]
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Dawid Ciężarkiewicz <dpc@dpc.pw>"]
 license = "MPL-2.0"
 documentation = "https://dpc.github.io/cbuf-rs/"
