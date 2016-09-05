@@ -1,13 +1,13 @@
 // Copyright 2015 Dawid Ciężarkiewicz
 // See LICENSE-MPL
 //
-//! Non-thread-shareable, simple and efficient Circular Buffer
-//! implementation that can store N elements when full (typical circular
-//! buffer implementations store N-1) without using separate flags.
-//!
-//! Uses only `core` so can be used in `#[no_std]` projects by using
-//! `no_std` feature.
-//!
+// Non-thread-shareable, simple and efficient Circular Buffer
+// implementation that can store N elements when full (typical circular
+// buffer implementations store N-1) without using separate flags.
+//
+// Uses only `core` so can be used in `#[no_std]` projects by using
+// `no_std` feature.
+//
 #![no_std]
 #![feature(const_fn)]
 #![feature(test)]
@@ -18,24 +18,6 @@ use core::marker::PhantomData;
 extern crate test as test;
 
 const CBUF_DATA_BIT: usize = !((usize::max_value() << 1) >> 1);
-
-pub trait CopyOrClone {
-    fn clone(&self) -> Self;
-}
-
-#[cfg(feature = "no_std")]
-impl<T : Copy> CopyOrClone for T {
-    fn clone(&self) -> T {
-        *self
-    }
-}
-
-#[cfg(not(feature = "no_std"))]
-impl<T : Clone> CopyOrClone for T {
-    fn clone(&self) -> T {
-        self.clone()
-    }
-}
 
 /// Circular Buffer
 ///
@@ -52,15 +34,15 @@ pub struct CBuf<'a, T: 'a> {
 /// to `get` and `put`.
 #[derive(Debug)]
 pub struct CBufControl<T> {
-    head : usize,
-    tail : usize,
-    phantom : PhantomData<T>
+    head: usize,
+    tail: usize,
+    phantom: PhantomData<T>,
 }
 
 #[cfg(not(feature = "no_std"))]
-impl<'a, T: CopyOrClone> CBuf<'a, T>
-        where T: Clone {
-
+impl<'a, T: Clone> CBuf<'a, T>
+    where T: Clone
+{
     /// Create new CBuf
     ///
     /// Length (not capacity) will be used to store elements
@@ -77,10 +59,7 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     /// Is buffer full?
     #[inline]
     pub fn is_full(&self) -> bool {
-        let CBuf {
-            ref ctrl,
-            ..
-        } = *self;
+        let CBuf { ref ctrl, .. } = *self;
 
         ctrl.is_full()
     }
@@ -88,10 +67,7 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     /// Is buffer empty?
     #[inline]
     pub fn is_empty(&self) -> bool {
-        let CBuf {
-            ref ctrl,
-            ..
-        } = *self;
+        let CBuf { ref ctrl, .. } = *self;
 
         ctrl.is_empty()
     }
@@ -102,10 +78,7 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     /// Returns `None` if buffer is empty.
     #[inline]
     pub fn peek(&mut self) -> Option<T> {
-        let CBuf {
-            ref mut ctrl,
-            ref buf,
-        } = *self;
+        let CBuf { ref mut ctrl, ref buf } = *self;
 
 
         ctrl.get(buf)
@@ -116,10 +89,7 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     /// Makes the buffer misbehave if it's empty.
     #[inline]
     pub fn peek_unchecked(&mut self) -> T {
-        let CBuf {
-            ref mut ctrl,
-            ref buf,
-        } = *self;
+        let CBuf { ref mut ctrl, ref buf } = *self;
 
 
         ctrl.peek_unchecked(buf)
@@ -131,10 +101,7 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     /// Returns `None` if buffer is empty.
     #[inline]
     pub fn get(&mut self) -> Option<T> {
-        let CBuf {
-            ref mut ctrl,
-            ref buf,
-        } = *self;
+        let CBuf { ref mut ctrl, ref buf } = *self;
 
 
         ctrl.get(buf)
@@ -145,10 +112,7 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     /// Makes the buffer misbehave if it's empty.
     #[inline]
     pub fn get_unchecked(&mut self) -> T {
-        let CBuf {
-            ref mut ctrl,
-            ref buf,
-        } = *self;
+        let CBuf { ref mut ctrl, ref buf } = *self;
 
 
         ctrl.get_unchecked(buf)
@@ -158,11 +122,8 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     ///
     /// Ignores the write if buffer is full.
     #[inline]
-    pub fn put(&mut self, val : T) {
-        let CBuf {
-            ref mut ctrl,
-            ref mut buf,
-        } = *self;
+    pub fn put(&mut self, val: T) {
+        let CBuf { ref mut ctrl, ref mut buf } = *self;
 
         ctrl.put(buf, val)
     }
@@ -171,18 +132,14 @@ impl<'a, T: CopyOrClone> CBuf<'a, T>
     ///
     /// Makes the buffer misbehave if it's full.
     #[inline]
-    pub fn put_unchecked(&mut self, val : T) {
-        let CBuf {
-            ref mut ctrl,
-            ref mut buf,
-        } = *self;
+    pub fn put_unchecked(&mut self, val: T) {
+        let CBuf { ref mut ctrl, ref mut buf } = *self;
 
         ctrl.put_unchecked(buf, val)
     }
 }
 
-impl<T : CopyOrClone> CBufControl<T> {
-
+impl<T: Clone> CBufControl<T> {
     pub fn new() -> CBufControl<T> {
         CBufControl {
             tail: 0,
@@ -204,7 +161,7 @@ impl<T : CopyOrClone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn get(&mut self, buf : &[T]) -> Option<T> {
+    pub fn get(&mut self, buf: &[T]) -> Option<T> {
         if self.is_empty() {
             return None;
         }
@@ -212,7 +169,7 @@ impl<T : CopyOrClone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn get_unchecked(&mut self, buf : &[T]) -> T {
+    pub fn get_unchecked(&mut self, buf: &[T]) -> T {
         let val = buf[self.tail & !CBUF_DATA_BIT].clone();
 
         self.tail += 1;
@@ -225,7 +182,7 @@ impl<T : CopyOrClone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn peek(&mut self, buf : &[T]) -> Option<T> {
+    pub fn peek(&mut self, buf: &[T]) -> Option<T> {
         if self.is_empty() {
             return None;
         }
@@ -233,12 +190,12 @@ impl<T : CopyOrClone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn peek_unchecked(&mut self, buf : &[T]) -> T {
+    pub fn peek_unchecked(&mut self, buf: &[T]) -> T {
         buf[self.tail & !CBUF_DATA_BIT].clone()
     }
 
     /// See corresponding method of CBuf
-    pub fn put(&mut self, buf : &mut [T], val : T) {
+    pub fn put(&mut self, buf: &mut [T], val: T) {
         if self.is_full() {
             return;
         }
@@ -246,7 +203,7 @@ impl<T : CopyOrClone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn put_unchecked(&mut self, buf : &mut [T], val : T) {
+    pub fn put_unchecked(&mut self, buf: &mut [T], val: T) {
         buf[self.head & !CBUF_DATA_BIT] = val;
 
         self.head += 1;
@@ -320,31 +277,35 @@ mod tests {
 
             for bit_i in 0..8 {
                 match pattern & (1 << bit_i) == 0 {
-                    true => if cbuf.is_empty() {
-                        assert!(cbuf.peek(&buf).is_none());
-                        assert!(cbuf.get(&buf).is_none());
-                    } else {
-                        assert!(cbuf.peek(&buf).unwrap() == get_val);
-                        let val = cbuf.get(&buf).unwrap();
-                        assert!(val == get_val);
-                        get_val = get_val.wrapping_add(1);
-                        cur_len -= 1;
-                    },
-                    false => if cbuf.is_full() {
-                        cbuf.put(&mut buf, put_val);
-                        assert!(cbuf.is_full());
-                    } else {
-                        cbuf.put(&mut buf, put_val);
-                        put_val = put_val.wrapping_add(1);
-                        cur_len += 1;
-                    },
+                    true => {
+                        if cbuf.is_empty() {
+                            assert!(cbuf.peek(&buf).is_none());
+                            assert!(cbuf.get(&buf).is_none());
+                        } else {
+                            assert!(cbuf.peek(&buf).unwrap() == get_val);
+                            let val = cbuf.get(&buf).unwrap();
+                            assert!(val == get_val);
+                            get_val = get_val.wrapping_add(1);
+                            cur_len -= 1;
+                        }
+                    }
+                    false => {
+                        if cbuf.is_full() {
+                            cbuf.put(&mut buf, put_val);
+                            assert!(cbuf.is_full());
+                        } else {
+                            cbuf.put(&mut buf, put_val);
+                            put_val = put_val.wrapping_add(1);
+                            cur_len += 1;
+                        }
+                    }
                 }
             }
         }
     }
 
     #[bench]
-    pub fn put_and_get(b : &mut Bencher) {
+    pub fn put_and_get(b: &mut Bencher) {
         let buf = &mut [0u8; 256];
         let mut cbuf = CBuf::new(buf);
 
@@ -357,7 +318,7 @@ mod tests {
     }
 
     #[bench]
-    pub fn put_unchecked_and_get(b : &mut Bencher) {
+    pub fn put_unchecked_and_get(b: &mut Bencher) {
         let buf = &mut [0u8; 256];
         let mut cbuf = CBuf::new(buf);
 
