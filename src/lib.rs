@@ -8,27 +8,16 @@
 //! Uses only `core` so can be used in `#[no_std]` projects by using
 //! `no_std` feature.
 //!
-#![cfg_attr(feature = "no_std", feature(no_std))]
-
-#![cfg_attr(test, feature(test))]
-
-#![feature(core)]
-
-#![cfg_attr(feature = "no_std", no_std)]
-
-#[cfg(test)]
-extern crate test as test;
-
-#[macro_use]
-extern crate core;
+#![no_std]
+#![feature(const_fn)]
+#![feature(test)]
 
 use core::option::Option::{self, Some, None};
 use core::marker::PhantomData;
-#[cfg(feature = "no_std")]
-use core::marker::Copy;
-#[cfg(feature = "no_std")]
-use core::slice::SliceExt;
-const CBUF_DATA_BIT : usize = 1 << 63;
+
+extern crate test as test;
+
+const CBUF_DATA_BIT: usize = !((usize::max_value() << 1) >> 1);
 
 pub trait CopyOrClone {
     fn clone(&self) -> Self;
@@ -50,11 +39,10 @@ impl<T : Clone> CopyOrClone for T {
 
 /// Circular Buffer
 ///
-/// Turns `Vec` into a Circular buffer with head and tail indexes.
-#[cfg(not(feature = "no_std"))]
+/// Turns a slice into a Circular buffer with head and tail indexes.
 #[derive(Debug)]
-pub struct CBuf<T> {
-    buf : Vec<T>,
+pub struct CBuf<'a, T: 'a> {
+    buf: &'a mut [T],
     ctrl: CBufControl<T>,
 }
 
@@ -62,8 +50,6 @@ pub struct CBuf<T> {
 ///
 /// Implements the actual logic of Circular Buffer, but requires passing &[T]
 /// to `get` and `put`.
-///
-/// Useful for operating on a raw slice, without allocating new `Vec`.
 #[derive(Debug)]
 pub struct CBufControl<T> {
     head : usize,
@@ -72,14 +58,14 @@ pub struct CBufControl<T> {
 }
 
 #[cfg(not(feature = "no_std"))]
-impl<T : CopyOrClone> CBuf<T>
-where T : Clone {
+impl<'a, T: CopyOrClone> CBuf<'a, T>
+        where T: Clone {
 
     /// Create new CBuf
     ///
     /// Length (not capacity) will be used to store elements
     /// in the circular buffer.
-    pub fn new(buf : Vec<T>) -> CBuf<T> {
+    pub fn new(buf: &'a mut [T]) -> CBuf<T> {
         debug_assert!(buf.len() < CBUF_DATA_BIT);
 
         CBuf {
@@ -298,9 +284,7 @@ mod tests {
 
     #[test]
     fn basic_cbuf() {
-        let mut buf = Vec::new();
-        buf.push(0u8);
-        buf.push(0u8);
+        let mut buf = &mut [0u8, 0u8];
         let mut cbuf = CBuf::new(buf);
 
         assert!(cbuf.is_empty());
@@ -361,10 +345,7 @@ mod tests {
 
     #[bench]
     pub fn put_and_get(b : &mut Bencher) {
-        let mut buf = Vec::new();
-        for _ in 0..256 {
-            buf.push(0u8);
-        }
+        let buf = &mut [0u8; 256];
         let mut cbuf = CBuf::new(buf);
 
         b.iter(|| {
@@ -374,12 +355,10 @@ mod tests {
 
         test::black_box(cbuf.get());
     }
+
     #[bench]
     pub fn put_unchecked_and_get(b : &mut Bencher) {
-        let mut buf = Vec::new();
-        for _ in 0..256 {
-            buf.push(0u8);
-        }
+        let buf = &mut [0u8; 256];
         let mut cbuf = CBuf::new(buf);
 
         b.iter(|| {
@@ -389,5 +368,4 @@ mod tests {
 
         test::black_box(cbuf.get());
     }
-
 }
