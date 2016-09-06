@@ -47,8 +47,13 @@ impl<'a, T: Clone> CBuf<'a, T>
     ///
     /// Length (not capacity) will be used to store elements
     /// in the circular buffer.
+    ///
+    /// panics if buf.len() == 0
     pub fn new(buf: &'a mut [T]) -> CBuf<T> {
         debug_assert!(buf.len() < CBUF_DATA_BIT);
+        if buf.len() == 0 {
+            panic!("len==0")
+        }
 
         CBuf {
             buf: buf,
