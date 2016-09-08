@@ -61,6 +61,12 @@ impl<'a, T: Clone> CBuf<'a, T>
         }
     }
 
+    /// get the buffer length
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.buf.len()
+    }
+
     /// Is buffer full?
     #[inline]
     pub fn is_full(&self) -> bool {
@@ -241,6 +247,7 @@ mod tests {
         let mut buf = &mut [0u8, 0u8];
         let mut cbuf = CBuf::new(buf);
 
+        assert!(cbuf.len() == 2);
         assert!(cbuf.is_empty());
         assert!(!cbuf.is_full());
 
