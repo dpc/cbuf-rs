@@ -41,7 +41,6 @@ pub struct CBufControl<T> {
 
 #[cfg(not(feature = "no_std"))]
 impl<'a, T: Clone> CBuf<'a, T>
-    where T: Clone
 {
     /// Create new CBuf
     ///
@@ -67,6 +66,24 @@ impl<'a, T: Clone> CBuf<'a, T>
         self.buf.len()
     }
 
+    /// Returns an raw pointer to the cbuf's buffer
+    ///
+    /// The caller must ensure that the cbuf outlives the pointer this function
+    /// returns, or else it will end up pointing to garbage.
+    #[inline]
+    pub fn as_ptr(&self) -> *const T {
+        &self.buf[0] as *const T
+    }
+
+    /// Returns an unsafe mutable pointer to the cbuf's buffer.
+    ///
+    /// The caller must ensure that the cbuf outlives the pointer this function
+    /// returns, or else it will end up pointing to garbage.
+    #[inline]
+    pub fn as_mut_ptr(&mut self) -> *mut T {
+        &mut self.buf[0] as *mut T
+    }
+
     /// Is buffer full?
     #[inline]
     pub fn is_full(&self) -> bool {
@@ -84,15 +101,16 @@ impl<'a, T: Clone> CBuf<'a, T>
     ///
     /// Returns `None` if buffer is empty.
     #[inline]
-    pub fn peek(&mut self) -> Option<T> {
+    pub fn peek(&mut self) -> Option<&T> {
         self.ctrl.peek(self.buf)
     }
 
     /// Peek next element from the CBuf without removing it
     ///
-    /// Makes the buffer misbehave if it's empty.
+    /// unsafe: if the buffer is empty, undefined data will be
+    /// returned.
     #[inline]
-    pub fn peek_unchecked(&mut self) -> T {
+    pub unsafe fn peek_unchecked(&mut self) -> &T {
         self.ctrl.peek_unchecked(self.buf)
     }
 
@@ -107,9 +125,9 @@ impl<'a, T: Clone> CBuf<'a, T>
 
     /// Remove one element from the CBuf
     ///
-    /// Makes the buffer misbehave if it's empty.
+    /// unsafe: Makes the buffer misbehave if it's empty.
     #[inline]
-    pub fn get_unchecked(&mut self) -> T {
+    pub unsafe fn get_unchecked(&mut self) -> T {
         self.ctrl.get_unchecked(self.buf)
     }
 
@@ -123,9 +141,9 @@ impl<'a, T: Clone> CBuf<'a, T>
 
     /// Add element the buffer
     ///
-    /// Makes the buffer misbehave if it's full.
+    /// unsafe: Makes the buffer misbehave if it's full.
     #[inline]
-    pub fn put_unchecked(&mut self, val: T) {
+    pub unsafe fn put_unchecked(&mut self, val: T) {
         self.ctrl.put_unchecked(self.buf, val)
     }
 }
@@ -173,7 +191,7 @@ impl<T: Clone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn peek(&mut self, buf: &[T]) -> Option<T> {
+    pub fn peek<'a>(&mut self, buf: &'a [T]) -> Option<&'a T> {
         if self.is_empty() {
             return None;
         }
@@ -181,8 +199,8 @@ impl<T: Clone> CBufControl<T> {
     }
 
     /// See corresponding method of CBuf
-    pub fn peek_unchecked(&mut self, buf: &[T]) -> T {
-        buf[self.tail & !CBUF_DATA_BIT].clone()
+    pub fn peek_unchecked<'a>(&mut self, buf: &'a [T]) -> &'a T {
+        &buf[self.tail & !CBUF_DATA_BIT]
     }
 
     /// See corresponding method of CBuf
@@ -226,7 +244,7 @@ mod tests {
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
 
-        assert_eq!(cbuf.peek(buf).unwrap(), 3);
+        assert_eq!(cbuf.peek(buf).unwrap(), &3);
         cbuf.peek(buf).unwrap();
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
@@ -258,7 +276,7 @@ mod tests {
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
 
-        assert_eq!(cbuf.peek().unwrap(), 3);
+        assert_eq!(cbuf.peek().unwrap(), &3);
         cbuf.peek().unwrap();
         assert!(!cbuf.is_empty());
         assert!(cbuf.is_full());
@@ -271,6 +289,24 @@ mod tests {
         assert!(cbuf.get().is_none());
         assert!(cbuf.get().is_none());
         cbuf.put(42);
+        assert_eq!(cbuf.get().unwrap(), 42);
+    }
+
+    #[test]
+    fn test_ptr() {
+        let mut buf = &mut [0u8, 0u8];
+        let mut cbuf = CBuf::new(buf);
+        cbuf.put(3);
+        cbuf.put(4);
+        unsafe {
+            let b = cbuf.as_ptr();
+            assert_eq!(*b, 3);
+            assert_eq!(*b.offset(1), 4);
+
+            let b = cbuf.as_mut_ptr();
+            *b.offset(1) = 42;
+        }
+        assert_eq!(cbuf.get().unwrap(), 3);
         assert_eq!(cbuf.get().unwrap(), 42);
     }
 
@@ -298,7 +334,7 @@ mod tests {
                             assert!(cbuf.peek(&buf).is_none());
                             assert!(cbuf.get(&buf).is_none());
                         } else {
-                            assert!(cbuf.peek(&buf).unwrap() == get_val);
+                            assert!(cbuf.peek(&buf).unwrap() == &get_val);
                             let val = cbuf.get(&buf).unwrap();
                             assert!(val == get_val);
                             get_val = get_val.wrapping_add(1);
@@ -338,7 +374,7 @@ mod tests {
         let buf = &mut [0u8; 256];
         let mut cbuf = CBuf::new(buf);
 
-        b.iter(|| {
+        b.iter(|| unsafe {
             cbuf.put_unchecked(0u8);
             cbuf.get_unchecked();
         });
