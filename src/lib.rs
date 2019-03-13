@@ -16,8 +16,6 @@
 use core::option::Option::{self, Some, None};
 use core::marker::PhantomData;
 
-extern crate test as test;
-
 const CBUF_DATA_BIT: usize = !((usize::max_value() << 1) >> 1);
 
 /// Circular Buffer
