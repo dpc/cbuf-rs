@@ -10,12 +10,13 @@
 //! Uses only `core` so can be used in `#[no_std]` projects by using
 //! `no_std` feature.
 #![no_std]
-#![feature(const_fn)]
-#![feature(test)]
+
+#![cfg_attr(test, feature(test))]
 
 use core::option::Option::{self, Some, None};
 use core::marker::PhantomData;
 
+#[cfg(test)]
 extern crate test as test;
 
 const CBUF_DATA_BIT: usize = !((usize::max_value() << 1) >> 1);
@@ -232,7 +233,7 @@ mod tests {
 
     #[test]
     fn basic_ctl() {
-        let mut buf = &mut [0u8, 2];
+        let buf = &mut [0u8, 2];
         let mut cbuf = CBufControl::<u8>::new();
 
         assert!(cbuf.is_empty());
@@ -263,7 +264,7 @@ mod tests {
 
     #[test]
     fn basic_cbuf() {
-        let mut buf = &mut [0u8, 0u8];
+        let buf = &mut [0u8, 0u8];
         let mut cbuf = CBuf::new(buf);
 
         assert!(cbuf.len() == 2);
@@ -295,7 +296,7 @@ mod tests {
 
     #[test]
     fn test_ptr() {
-        let mut buf = &mut [0u8, 0u8];
+        let buf = &mut [0u8, 0u8];
         let mut cbuf = CBuf::new(buf);
         cbuf.put(3);
         cbuf.put(4);
